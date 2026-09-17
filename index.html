@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDIP Exam Prep - Pass on Your First Try</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 60px 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .hero p {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        input[type="email"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        input[type="email"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .btn {
+            padding: 14px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0d47a1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1a73e8;
+            margin-top: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f0f0;
+        }
+
+        .course-hero {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .course-price {
+            font-size: 2.5em;
+            color: #1a73e8;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .price-note {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+
+        .course-features {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+
+        .credentials {
+            background: #e3f2fd;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .credentials h3 {
+            color: #0d47a1;
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #1a73e8;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 5px;
+            font-weight: 600;
+        }
+
+        .stripe-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        #card-element {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        .stripe-error {
+            color: #dc3545;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .stripe-success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+
+        .social-proof {
+            background: #f0f7ff;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .stat {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #1a73e8;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .nav-buttons button {
+            flex: 1;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .hero h2 {
+                font-size: 1.5em;
+            }
+
+            .course-price {
+                font-size: 2em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1a73e8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PAGE 1: EMAIL CAPTURE -->
+        <div id="page1" class="page active">
+            <header>
+                <h1>📚 CDIP Exam Prep</h1>
+                <p class="tagline">Pass on Your First Try</p>
+            </header>
+
+            <div class="hero">
+                <h2>The 5 Topics Clinching 80% of CDIP Test Failures</h2>
+                <p>Get the exact breakdown + study strategy used to pass CDIP in April 2026</p>
+            </div>
+
+            <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <form id="emailForm">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="Sabeen" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Get the Free Breakdown</button>
+                    <p style="text-align: center; color: #666; font-size: 0.9em; margin-top: 15px;">
+                        ✓ Free breakdown sent instantly<br>
+                        ✓ Join 500+ CDI professionals
+                    </p>
+                </form>
+            </div>
+
+            <div class="credentials" style="margin-top: 40px;">
+                <h3>Taught by CDI Specialist</h3>
+                <div>
+                    <span class="badge">CDIP (April 2026)</span>
+                    <span class="badge">CCS (June 2026)</span>
+                </div>
+                <p style="margin-top: 15px; color: #0d47a1;">MBBS + Anesthesiology Training</p>
+            </div>
+        </div>
+
+        <!-- PAGE 2: COURSE SALES -->
+        <div id="page2" class="page">
+            <header>
+                <h1>📚 CDIP Exam Prep Course</h1>
+                <p class="tagline">Your Complete Study Plan</p>
+            </header>
+
+            <div class="course-hero">
+                <h2 style="margin-bottom: 10px;">Pass CDIP on Your First Try</h2>
+                <p style="color: #666; font-size: 1.1em;">Everything you need to master the exam—exactly how I did it.</p>
+                
+                <div class="course-price">$99</div>
+                <p class="price-note">One-time payment • Lifetime access</p>
+
+                <div class="course-features">
+                    <h3 style="margin-bottom: 20px; color: #333;">What's Included:</h3>
+                    <ul class="feature-list">
+                        <li>5-Topic Deep Dive (the ones that fail 80% of test-takers)</li>
+                        <li>50+ Practice Questions with Detailed Explanations</li>
+                        <li>8-Week Study Schedule (flexible pacing)</li>
+                        <li>Query Compliance Checklist</li>
+                        <li>Real Case Studies from Hospital Audits</li>
+                        <li>Email Tips Throughout (daily motivation + strategy)</li>
+                        <li>Lifetime Access (all future updates included)</li>
+                    </ul>
+                </div>
+
+                <div class="social-proof">
+                    <div class="stat">500+</div>
+                    <div class="stat-label">CDI professionals in our community</div>
+                </div>
+
+                <div class="credentials">
+                    <h3>Your Instructor</h3>
+                    <div>
+                        <span class="badge">CDIP Certified</span>
+                        <span class="badge">CCS Certified</span>
+                    </div>
+                    <p style="margin-top: 15px; color: #0d47a1;">Passed CDIP April 2026 • Created this exact course content</p>
+                </div>
+            </div>
+
+            <div class="stripe-form">
+                <h3 style="margin-bottom: 20px;">Complete Your Purchase</h3>
+                
+                <div class="form-group">
+                    <label for="fullname">Full Name</label>
+                    <input type="text" id="fullname" placeholder="Sabeen Abdullah" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email2">Email Address</label>
+                    <input type="email" id="email2" placeholder="you@example.com" required>
+                </div>
+
+                <label>Card Details</label>
+                <div id="card-element"></div>
+                <div id="card-errors" class="stripe-error"></div>
+
+                <button id="submit-btn" class="btn btn-primary" style="margin-top: 20px;">Pay $99 & Get Instant Access</button>
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Processing your payment...</p>
+                </div>
+                <div id="success" class="stripe-success" style="display: none;">
+                    ✓ Payment successful! Check your email for course access.
+                </div>
+            </div>
+
+            <div class="nav-buttons">
+                <button onclick="showPage(1)" class="btn back-btn">← Back</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stripe = Stripe('pk_test_51UGRrt2N9EEc7aemCpHjqEf9P1c7ePsbBJRMqyBj0os8lNGy0JlLauLpZHST9nO7KD7M2FoNtviJSmdS7rI3ED0G00RBzd7zgj');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        cardElement.addEventListener('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        document.getElementById('emailForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            console.log('Sending to SendFox:', { name, email });
+            showPage(2);
+        });
+
+        document.getElementById('submit-btn').addEventListener('click', async function() {
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email2').value;
+            
+            if (!fullname || !email) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('submit-btn').disabled = true;
+
+            try {
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                    billing_details: {
+                        name: fullname,
+                        email: email
+                    }
+                });
+
+                if (error) {
+                    document.getElementById('card-errors').textContent = error.message;
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('submit-btn').disabled = false;
+                } else {
+                    console.log('Payment Method:', paymentMethod);
+                    
+                    setTimeout(() => {
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('success').style.display = 'block';
+                        document.getElementById('submit-btn').style.display = 'none';
+                        
+                        document.querySelector('.stripe-form').innerHTML += `
+                            <div style="background: #d4edda; color: #155724; padding: 20px; border-radius: 6px; margin-top: 20px; text-align: center;">
+                                <h3>✓ Welcome to CDIP Exam Prep!</h3>
+                                <p>Check <strong>${email}</strong> for your course login and first lesson.</p>
+                                <p style="margin-top: 10px; font-size: 0.9em;">You'll also receive daily study tips and motivation emails.</p>
+                            </div>
+                        `;
+                    }, 2000);
+                }
+            } catch (err) {
+                document.getElementById('card-errors').textContent = 'Payment failed. Please try again.';
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('submit-btn').disabled = false;
+            }
+        });
+
+        function showPage(pageNum) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + pageNum).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
