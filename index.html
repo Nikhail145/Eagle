@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CDIP Exam Prep - Pass on Your First Try</title>
-    <script src="https://js.stripe.com/v3/"></script>
     <style>
         * {
             margin: 0;
@@ -336,23 +335,15 @@
             </div>
 
             <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <form id="emailForm">
-                    <div class="form-group">
-                        <label for="name">Your Name</label>
-                        <input type="text" id="name" name="name" placeholder="Sabeen" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Your Email</label>
-                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Get the Free Breakdown</button>
-                    <p style="text-align: center; color: #666; font-size: 0.9em; margin-top: 15px;">
-                        ✓ Free breakdown sent instantly<br>
-                        ✓ Join 500+ CDI professionals
-                    </p>
-                </form>
+                <div id="sendfox-form"></div>
+                <script src="https://cdn.sendfox.com/js/embed.js" data-form="1jnzw8" data-api="https://sendfox.com" data-target="#sendfox-form" async></script>
+                <p style="text-align: center; color: #666; font-size: 0.9em; margin-top: 15px;">
+                    ✓ Free breakdown sent instantly<br>
+                    ✓ Join 500+ CDI professionals
+                </p>
+                <p style="text-align: center; margin-top: 15px;">
+                    <a href="#course" onclick="showPage(2); return false;" style="color: #1e40af; font-size: 0.9em;">Already have the breakdown? See the full course →</a>
+                </p>
             </div>
 
             <div class="credentials" style="margin-top: 40px;">
@@ -371,6 +362,12 @@
                 <h1>📚 CDIP Exam Prep Course</h1>
                 <p class="tagline">Your Complete Study Plan</p>
             </header>
+
+            <div id="breakdown-box" style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 25px; border-radius: 8px; margin-bottom: 30px; text-align: center;">
+                <h3 style="color: #065f46; margin-bottom: 8px;">✓ You're in! Here's your free breakdown</h3>
+                <p style="color: #065f46; margin-bottom: 15px;">The 5 Topics That Trip Up 80% of CDIP Candidates (6 pages, PDF). A copy is also on its way to your inbox.</p>
+                <a href="https://www.cdipspecialist.com/CDIP_Free_Breakdown.pdf" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-block; text-decoration: none; background: #059669;">Download the Free Breakdown →</a>
+            </div>
 
             <div class="course-hero">
                 <h2 style="margin-bottom: 10px;">Pass CDIP on Your First Try</h2>
@@ -406,31 +403,14 @@
                 </div>
             </div>
 
-            <div class="stripe-form">
-                <h3 style="margin-bottom: 20px;">Complete Your Purchase</h3>
-                
-                <div class="form-group">
-                    <label for="fullname">Full Name</label>
-                    <input type="text" id="fullname" placeholder="Sabeen Abdullah" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="email2">Email Address</label>
-                    <input type="email" id="email2" placeholder="you@example.com" required>
-                </div>
-
-                <label>Card Details</label>
-                <div id="card-element"></div>
-                <div id="card-errors" class="stripe-error"></div>
-
-                <button id="submit-btn" class="btn btn-primary" style="margin-top: 20px;">Pay $99 & Get Instant Access</button>
-                <div id="loading" class="loading">
-                    <div class="spinner"></div>
-                    <p>Processing your payment...</p>
-                </div>
-                <div id="success" class="stripe-success" style="display: none;">
-                    ✓ Payment successful! Check your email for course access.
-                </div>
+            <div class="stripe-form" style="text-align: center;">
+                <h3 style="margin-bottom: 12px;">Course opens this week</h3>
+                <p style="color: #555; margin-bottom: 8px;">Enrollment isn't open yet. Everyone on the email list gets first access (and the launch price) the moment it opens.</p>
+                <p style="color: #777; font-size: 0.9em;">You're on the list. Watch your inbox.</p>
+                <!-- When ready, replace this block with:
+                <a id="pay-link" href="https://buy.stripe.com/eVqfZa1fFcKKdpHdHH63K00" class="btn btn-primary" style="display: inline-block; text-decoration: none;">Pay $99 &amp; Get Instant Access</a>
+                <p style="color: #666; font-size: 0.9em; margin-top: 15px;">Secure checkout by Stripe. You'll get the course link on the next screen and by email.</p>
+                -->
             </div>
 
             <div class="nav-buttons">
@@ -440,83 +420,32 @@
     </div>
 
     <script>
-        const stripe = Stripe('pk_live_51UGRrh2OiRlTmt6jPAcP273ClCxB2i4AKFjeiN4OYvxIVRpbbojD8WeB6xUYYRPIIQu1zKvxWmNTBqkpV5GN9og300PyxkxT7G');
-        const elements = stripe.elements();
-        const cardElement = elements.create('card');
-        cardElement.mount('#card-element');
-
-        cardElement.addEventListener('change', function(event) {
-            const displayError = document.getElementById('card-errors');
-            if (event.error) {
-                displayError.textContent = event.error.message;
-            } else {
-                displayError.textContent = '';
-            }
-        });
-
-        document.getElementById('emailForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            console.log('Sending to SendFox:', { name, email });
-            showPage(2);
-        });
-
-        document.getElementById('submit-btn').addEventListener('click', async function() {
-            const fullname = document.getElementById('fullname').value;
-            const email = document.getElementById('email2').value;
-            
-            if (!fullname || !email) {
-                alert('Please fill in all fields');
-                return;
-            }
-
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('submit-btn').disabled = true;
-
-            try {
-                const { paymentMethod, error } = await stripe.createPaymentMethod({
-                    type: 'card',
-                    card: cardElement,
-                    billing_details: {
-                        name: fullname,
-                        email: email
-                    }
-                });
-
-                if (error) {
-                    document.getElementById('card-errors').textContent = error.message;
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('submit-btn').disabled = false;
-                } else {
-                    console.log('Payment Method:', paymentMethod);
-                    
-                    setTimeout(() => {
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('success').style.display = 'block';
-                        document.getElementById('submit-btn').style.display = 'none';
-                        
-                        document.querySelector('.stripe-form').innerHTML += `
-                            <div style="background: #d4edda; color: #155724; padding: 20px; border-radius: 6px; margin-top: 20px; text-align: center;">
-                                <h3>✓ Welcome to CDIP Exam Prep!</h3>
-                                <p>Check <strong>${email}</strong> for your course login and first lesson.</p>
-                                <p style="margin-top: 10px; font-size: 0.9em;">You'll also receive daily study tips and motivation emails.</p>
-                            </div>
-                        `;
-                    }, 2000);
-                }
-            } catch (err) {
-                document.getElementById('card-errors').textContent = 'Payment failed. Please try again.';
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('submit-btn').disabled = false;
-            }
-        });
-
         function showPage(pageNum) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page' + pageNum).classList.add('active');
             window.scrollTo(0, 0);
         }
+
+        // Open the course page directly via https://www.cdipspecialist.com/#course
+        if (window.location.hash === '#course') { document.getElementById('breakdown-box').style.display = 'none'; showPage(2); }
+        window.addEventListener('hashchange', function () {
+            if (window.location.hash === '#course') showPage(2);
+        });
+
+        // After a successful Sendfox signup (the form is replaced by a success message),
+        // move the visitor to the course page.
+        (function () {
+            var target = document.getElementById('sendfox-form');
+            if (!target) return;
+            var observer = new MutationObserver(function () {
+                var card = target.querySelector('.sendfox-embed-card');
+                if (card && !card.querySelector('form')) {
+                    observer.disconnect();
+                    setTimeout(function () { showPage(2); }, 1500);
+                }
+            });
+            observer.observe(target, { childList: true, subtree: true });
+        })();
     </script>
 </body>
 </html>
